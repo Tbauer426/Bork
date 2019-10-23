@@ -1,2 +1,0 @@
-# Bork
-Tinder for dogs
