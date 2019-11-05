@@ -15,7 +15,9 @@ import java.util.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+//import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,7 +55,29 @@ public class servlet{
 	@Autowired
 	private UserRepo userRepo;
 	
-	@RequestMapping(value = "/Register_User", method = RequestMethod.POST)
+	@RequestMapping("/")
+	public String index(Model model) {
+		model.addAttribute("User", new User());
+        return "login.html";
+	}
+	
+	@RequestMapping(value = "/login", method = RequestMethod.GET)
+    public String login(Model model, String error, String logout) {
+		model.addAttribute("User", new User());
+        if (error != null)
+            model.addAttribute("errorMsg", "Your username and password are invalid.");
+
+        return "login.html";
+    }
+	
+	@RequestMapping(value = "/registration", method = RequestMethod.GET)
+	public String registerUser(Model model) {
+		model.addAttribute("User", new User());
+		
+		return "registration.html";
+	}
+	
+	@RequestMapping(value = "/registration", method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<?> registerUser(User u) {
 		User temp = userRepo.findByUserName(u.getUserName());
 		if(temp.getUserName() == u.getUserName() /*&& Do something to compare passwords*/) {
@@ -77,8 +101,8 @@ public class servlet{
 		}
 	}
 	
-	@RequestMapping(value = "/{dogId}/Add_Image", method = RequestMethod.POST)
-	public @ResponseBody ResponseEntity<?> addImage(@PathVariable("dogId") Long id, Image image) {
+	@RequestMapping(value = "/{userId}/{dogId}/Add_Image", method = RequestMethod.POST)
+	public @ResponseBody ResponseEntity<?> addImage(@PathVariable("userId") Long userId, @PathVariable("dogId") Long id, Image image) {
 		Collection<Image> temp = imageRepo.findImageWhereUserIdIsEqualToId(id);
 		if(temp.size() < 6) {
 			imageRepo.save(image);
@@ -89,8 +113,8 @@ public class servlet{
 		}
 	}
 	
-	@RequestMapping(value = "/{dogId}/Remove_Image", method = RequestMethod.GET)
-	public @ResponseBody ResponseEntity<?> removeImage(@PathVariable("dogId") Long id, Image image) {
+	@RequestMapping(value = "/{userId}/{dogId}/Remove_Image", method = RequestMethod.GET)
+	public @ResponseBody ResponseEntity<?> removeImage(@PathVariable("userId") Long userId, @PathVariable("dogId") Long id, Image image) {
 		Image temp = imageRepo.findImageById(id);
 		if(temp == null) {
 			imageRepo.delete(image);
@@ -102,11 +126,16 @@ public class servlet{
 	}
 	
 	//add requirement method
-	@RequestMapping(value = "/{dogId}/Get_Requirements", method = RequestMethod.GET)
-	public @ResponseBody ResponseEntity<?> getDogsInRequirements(@PathVariable("dogId") Long id, @RequestBody Dog dog, @RequestBody User user, @RequestBody Requirements requirements) {
+	@RequestMapping(value = "/{userId}/{dogId}/Get_Requirements", method = RequestMethod.GET)
+	public @ResponseBody ResponseEntity<?> getDogsInRequirements(@PathVariable("userId") Long userId, @PathVariable("dogId") Long id, @RequestBody Dog dog, @RequestBody User user, @RequestBody Requirements requirements) {
+		long latTop = user.getLatitude() + dog.getRadius();
+		long latLow = user.getLatitude() - dog.getRadius();
+		long lonTop = user.getLongitude() + dog.getRadius();
+		long lonLow = user.getLongitude() - dog.getRadius();
+		
+		
 		Collection<Dog> temp = dogRepo.findByRequirements(dog.getAgeUpper(), dog.getAgeDown(), 
-				dog.getSexReq(), dog.getBreedReq(), user.getLatitude() + dog.getRadius(), 
-				user.getLatitude() - dog.getRadius(), user.getLongitude() + dog.getRadius(), user.getLongitude() - dog.getRadius());
+				dog.getSexReq(), dog.getBreedReq(), latTop, latLow, lonTop, lonLow);
 		
 		if(temp != null) {
 			return new ResponseEntity<>(temp, HttpStatus.OK);
@@ -116,8 +145,8 @@ public class servlet{
 		}
 	}
 	
-	@RequestMapping(value = "/{dogId}/Set_Requirements", method = RequestMethod.POST)
-	public @ResponseBody ResponseEntity<?> setRequirents(@PathVariable("dogId") Long id, @RequestBody Dog dog) {
+	@RequestMapping(value = "/{userId}/{dogId}/Set_Requirements", method = RequestMethod.POST)
+	public @ResponseBody ResponseEntity<?> setRequirents(@PathVariable("userId") Long userId, @PathVariable("dogId") Long id, @RequestBody Dog dog) {
 		Dog temp = dogRepo.findDogById(id);
 		
 		if(temp != null) {
@@ -128,6 +157,8 @@ public class servlet{
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
+	
+
 	
 	
 	//all of this here is just for encryption

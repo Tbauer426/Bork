@@ -1,5 +1,7 @@
 package Bork;
 
+import org.springframework.ui.Model;
+
 import retrofit.http.GET;
 import retrofit.http.POST;
 
@@ -22,4 +24,7 @@ public interface BorkApi{
 	//Make requirements object
 	@GET("/{dogId}/Get_Requirements")
 	public Void getRequirements();
+	
+	@GET("/login")
+	public String login(Model model, String error, String logout);
 }

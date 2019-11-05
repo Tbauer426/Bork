@@ -1,12 +1,13 @@
 package Bork.Dog;
 
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
-import org.springframework.data.annotation.Id;
+//import Bork.Requirements.Requirements;
 
-import Bork.Requirements.Requirements;
-
+@Entity
 public class Dog{
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -16,11 +17,24 @@ public class Dog{
 	//change this to DOB
 	private int age;
 	private String name;
-	//private location location;
+	private long latitude;
+	private long longitude;
+	public long getLatitude() {
+		return latitude;
+	}
+	public void setLatitude(long latitude) {
+		this.latitude = latitude;
+	}
+	public long getLongitude() {
+		return longitude;
+	}
+	public void setLongitude(long longitude) {
+		this.longitude = longitude;
+	}
 	private char sex;
 	private long ownerId;
 	private String breed;
-	private Requirements requirements;
+	//private Requirements requirements;
 	
 	//requirements
 	//change this to DOB
@@ -78,12 +92,12 @@ public class Dog{
 	public void setOwnerId(long ownerId) {
 		this.ownerId = ownerId;
 	}
-	public Requirements getRequirements() {
-		return requirements;
-	}
-	public void setRequirements(Requirements requirements) {
-		this.requirements = requirements;
-	}
+//	public Requirements getRequirements() {
+//		return requirements;
+//	}
+//	public void setRequirements(Requirements requirements) {
+//		this.requirements = requirements;
+//	}
 //	public Collection<Long> getDogsImages() {
 //		return dogsImages;
 //	}

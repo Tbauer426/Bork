@@ -19,7 +19,6 @@ public class User{
 	//uses geolite
 	private Long latitude;
 	private Long longitude;
-	private char sex;
 	private String userName;
 	private String password;
 	public long getId() {
@@ -57,12 +56,6 @@ public class User{
 	}
 	public void setLongitude(Long longitude) {
 		this.longitude = longitude;
-	}
-	public char getSex() {
-		return sex;
-	}
-	public void setSex(char sex) {
-		this.sex = sex;
 	}
 	public String getUserName() {
 		return userName;

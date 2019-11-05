@@ -1,9 +1,14 @@
 package Bork.Requirements;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+
 import org.springframework.data.annotation.Id;
 
+
 public class Requirements{
-	@Id
+
 	private long dogId;
 	
 	private String description;
